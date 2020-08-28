@@ -95,3 +95,8 @@ export function unwords(words: string[]): string {
 export function implies(b: boolean, c: boolean) {
   return !b || (b && c);
 }
+
+// Capitalizes the first character of the string.
+export function capitalize(s: string) {
+  return s.substr(0, 1).toUpperCase() + s.substr(1);
+}

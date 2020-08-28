@@ -54,3 +54,24 @@ export function setMinus<T>(a: T[], b: T[]): T[] {
   }
   return result;
 }
+
+// Takes a mapping of class names to booleans denoting whether each class is
+// enabled. Returns a string that can be used for the `class` attribute of an
+// element.
+export function classes(enabled: {[className: string]: boolean}): string {
+  let enabledClasses = [];
+  for (const className in enabled) {
+    if (enabled[className]) enabledClasses.push(className);
+  }
+  return unwords(enabledClasses);
+}
+
+// Returns a string containing the given words separated by spaces.
+export function unwords(words: string[]): string {
+  let result = "";
+  for (const word of words) {
+    if (result == "") result = word;
+    else result += " " + word;
+  }
+  return result;
+}

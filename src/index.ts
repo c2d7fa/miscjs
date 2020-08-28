@@ -1,3 +1,6 @@
+// Returns `true` if the two arrays are equal, in the sense that they contain
+// the same elements at the same positions. If `eq` is given, it is used to
+// compare the elements, otherwise `===` is used.
 export function arrayEq<T>(a: T[], b: T[], eq?: (x: T, y: T) => boolean): boolean {
   const eq_ = eq ?? ((x, y) => x === y);
   if (a.length !== b.length) return false;
@@ -5,7 +8,8 @@ export function arrayEq<T>(a: T[], b: T[], eq?: (x: T, y: T) => boolean): boolea
   return true;
 }
 
-// A variant of splice that returns a new array rather than modifying its input.
+// A variant of the built-in function `splice` that returns a new array rather
+// than modifying its input.
 export function splice<T>(a: T[], start: number, deleteCount?: number): T[];
 export function splice<T>(a: T[], start: number, deleteCount: number, ...items: T[]): T[];
 export function splice<T>(a: T[], start: number, deleteCount?: number, ...items: T[]): T[] {
@@ -18,35 +22,45 @@ export function splice<T>(a: T[], start: number, deleteCount?: number, ...items:
   return result;
 }
 
+// Returns `true` if `a` has the element `x`, `false` otherwise. If `eq` is
+// given, it is used as the equality operator; otherwise, this is equivalent to
+// `a.includes(x)`.
 export function includesBy<T>(a: T[], x: T, eq?: (x: T, y: T) => boolean): boolean {
   const eq_ = eq ?? ((x, y) => x === y);
   for (const y of a) if (eq_(x, y)) return true;
   return false;
 }
 
+// Returns the first item in `a` equal to `x`. If `eq` is given, it is used as
+// the equality operator.
 export function indexOfBy<T>(a: T[], x: T, eq?: (x: T, y: T) => boolean): number | undefined {
   const eq_ = eq ?? ((x, y) => x === y);
   for (let i = 0; i < a.length; ++i) if (eq_(a[i], x)) return i;
   return undefined;
 }
 
+// Returns an identical object, but with the key `k` removed.
 export function removeKey<V>(o: {[x: string]: V}, k: string): {[x: string]: V} {
   const result = {...o};
   delete result[k];
   return result;
 }
 
+// Like `removeKey`, but takes a number as the key.
 export function removeKeyNumeric<V>(o: {[x: number]: V}, k: number): {[x: string]: V} {
   const result = {...o};
   delete result[k];
   return result;
 }
 
+// Remove the elements of `a` that are equal to `x`. When `eq` is given, use
+// this operator for equality.
 export function removeBy<T>(a: T[], x: T, eq?: (x: T, y: T) => boolean): T[] {
   const eq_ = eq ?? ((x, y) => x === y);
   return a.filter((y) => !eq_(x, y));
 }
 
+// Returns the items of `a` that are not also in `a`.
 export function setMinus<T>(a: T[], b: T[]): T[] {
   let result = [...a];
   for (const y of b) {

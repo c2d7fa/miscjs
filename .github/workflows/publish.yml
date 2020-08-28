@@ -10,8 +10,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2.3.2
-      - name: Publish NPM package
-        uses: pascalgn/npm-publish-action@1.3.3
+      - run: |
+          published_version="$(npm show "$(node -pe 'require("./package.json").name')" version)"
+          local_version="$(node -pe 'require("./package.json").version')"
+          if [[ published_version != local_version ]]; then
+            echo '//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}' >.npmrc
+            npm publish
+          fi
         env:
-          GITHUB_OTKEN: ${{secrets.GITHUB_TOKEN}}
           NPM_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}

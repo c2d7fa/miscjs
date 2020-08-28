@@ -92,6 +92,6 @@ export function unwords(words: string[]): string {
 
 // Returns `true` of `b` implies `c` (in the sense of a material conditional),
 // `false` otherwise.
-function implies(b: boolean, c: boolean) {
+export function implies(b: boolean, c: boolean) {
   return !b || (b && c);
 }

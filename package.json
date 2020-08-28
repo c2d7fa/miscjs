@@ -1,6 +1,6 @@
 {
   "name": "@johv/miscjs",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Library of miscellaneous utility functions",
   "main": "lib/index.js",
   "files": [

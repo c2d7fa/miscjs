@@ -100,3 +100,14 @@ export function implies(b: boolean, c: boolean) {
 export function capitalize(s: string) {
   return s.substr(0, 1).toUpperCase() + s.substr(1);
 }
+
+// Returns `text` truncated to the length `maxLength`. If the string is too
+// large, three dots are inserted at the end such that the total length of the
+// string is at most `maxLength`.
+export function truncateEllipsis(text: string, maxLength: number) {
+  if (text.length >= maxLength) {
+    return text.substr(0, maxLength - 3) + "...";
+  } else {
+    return text;
+  }
+}

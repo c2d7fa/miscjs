@@ -1,6 +1,6 @@
 {
   "name": "@johv/miscjs",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Library of miscellaneous utility functions",
   "main": "lib/index.js",
   "files": [
@@ -8,7 +8,8 @@
   ],
   "scripts": {
     "build": "tsc",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "test": "jest --verbose"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,8 @@
   },
   "homepage": "https://github.com/c2d7fa/miscjs#readme",
   "devDependencies": {
+    "jest": "^26.6.3",
+    "ts-jest": "^26.4.4",
     "typescript": "^4.0.2"
   }
 }

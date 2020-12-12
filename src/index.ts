@@ -1,3 +1,5 @@
+export {default as choose} from "./choose";
+
 // Returns `true` if the two arrays are equal, in the sense that they contain
 // the same elements at the same positions. If `eq` is given, it is used to
 // compare the elements, otherwise `===` is used.

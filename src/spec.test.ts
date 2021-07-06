@@ -1,6 +1,6 @@
 /// <reference types="@types/jest" />
 
-import {isValid} from "./spec";
+import {$literal, isValid} from "./spec";
 
 describe("basic types", () => {
   test("strings are strings", () => {
@@ -25,5 +25,19 @@ describe("basic types", () => {
 
   test("dates are dates", () => {
     expect(isValid("date", new Date("2021-07-05T17:08:35Z"))).toBeTruthy();
+  });
+});
+
+describe("literals", () => {
+  test("if a string is one of the given literals, it's valid", () => {
+    expect(isValid($literal(["valid1", "valid2"]), "valid1")).toBeTruthy();
+  });
+
+  test("if a string is not one of the given literals, it's invalid", () => {
+    expect(isValid($literal(["valid1", "valid2"]), "invalid")).toBeFalsy();
+  });
+
+  test("a non-string is never a valid literal, even if it would convert to the string representation", () => {
+    expect(isValid($literal(["1"]), 1)).toBeFalsy();
   });
 });

@@ -77,5 +77,11 @@ export function isValid<P extends Spec>(spec: P, value: unknown): value is Value
   if (spec === "undefined") return value === undefined;
   if (spec === "date") return value instanceof Date;
 
+  if (spec instanceof Array && spec[0] === $_literal) {
+    const validLiterals = spec.slice(1);
+    if (typeof value !== "string") return false;
+    return validLiterals.includes(value);
+  }
+
   return false;
 }

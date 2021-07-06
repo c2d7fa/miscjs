@@ -70,5 +70,12 @@ export type Value<P> = P extends keyof BasicTypes
   : never;
 
 export function isValid<P extends Spec>(spec: P, value: unknown): value is Value<P> {
+  if (spec === "string") return typeof value === "string";
+  if (spec === "number") return typeof value === "number";
+  if (spec === "boolean") return typeof value === "boolean";
+  if (spec === "null") return value === null;
+  if (spec === "undefined") return value === undefined;
+  if (spec === "date") return value instanceof Date;
+
   return false;
 }

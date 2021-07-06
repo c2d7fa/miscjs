@@ -1,6 +1,6 @@
 /// <reference types="@types/jest" />
 
-import {$array, $literal, $nullable, isValid} from "./spec";
+import {$array, $check, $literal, $nullable, $or, isValid} from "./spec";
 
 describe("basic types", () => {
   test("strings are strings", () => {
@@ -92,5 +92,51 @@ describe("arrays", () => {
 
   test("if any array element doesn't match, the array is invalid", () => {
     expect(isValid($array("number"), [0, 1, "2", 3])).toBeFalsy();
+  });
+});
+
+describe("custom checks", () => {
+  test("if the check fails, the value is invalid", () => {
+    function isLongString(x: unknown): x is string {
+      return isValid("string", x) && x.length > 3;
+    }
+    expect(isValid($check(isLongString), "ab")).toBeFalsy();
+  });
+
+  test("if the check succeeds, the value is valid", () => {
+    function isLongString(x: unknown): x is string {
+      return isValid("string", x) && x.length > 3;
+    }
+    expect(isValid($check(isLongString), "abcd")).toBeTruthy();
+  });
+});
+
+describe("or", () => {
+  test("with no arguments, a value is always invalid", () => {
+    expect(isValid($or([]), 0.5)).toBeFalsy();
+  });
+
+  test("with one argument, a value is valid if it matches the inner type", () => {
+    expect(isValid($or(["number"]), 0.5)).toBeTruthy();
+  });
+
+  test("with one argument, a value is invalid if it doesn't match the inner type", () => {
+    expect(isValid($or(["string"]), 0.5)).toBeFalsy();
+  });
+
+  test("with many arguments, a value is valid if it matches any one", () => {
+    expect(
+      isValid($or(["number", {value: "boolean"}, {value: "string"}]), {
+        value: true,
+      }),
+    ).toBeTruthy();
+  });
+
+  test("with many arguments, a value is invalid if it matches none", () => {
+    expect(
+      isValid($or(["number", {value: "boolean"}, {value: "string"}]), {
+        value: 0.5,
+      }),
+    ).toBeFalsy();
   });
 });

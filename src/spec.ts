@@ -11,8 +11,6 @@ type BasicTypes = {
   date: Date;
 };
 
-type JsonDate = `${number}-${number}-${number}T${number}:${number}:${number}.${number}Z`;
-
 const $_array = Symbol("arrayOf");
 export const $array = <P extends Spec>(spec: P): [typeof $_array, P] => [$_array, spec];
 
@@ -40,8 +38,7 @@ export type Spec =
   | [typeof $_nullable, Spec]
   | [typeof $_literal, ...string[]]
   | [typeof $_check, (x: unknown) => boolean]
-  | [typeof $_or, readonly Spec[]]
-  | typeof $jsonDate;
+  | [typeof $_or, readonly Spec[]];
 
 export type Value<P> = P extends keyof BasicTypes
   ? BasicTypes[P]
@@ -51,8 +48,6 @@ export type Value<P> = P extends keyof BasicTypes
   ? Ks extends string[]
     ? LiteralIn<Ks>
     : never
-  : P extends typeof $jsonDate
-  ? JsonDate
   : P extends [typeof $_nullable, infer Q]
   ? Value<Q> | null
   : P extends Record<infer K, Spec>

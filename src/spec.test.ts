@@ -93,6 +93,10 @@ describe("arrays", () => {
   test("if any array element doesn't match, the array is invalid", () => {
     expect(isValid($array("number"), [0, 1, "2", 3])).toBeFalsy();
   });
+
+  test("if all array elements match, the array is valid", () => {
+    expect(isValid($array("number"), [0, 1, 2, 3])).toBeTruthy();
+  });
 });
 
 describe("custom checks", () => {

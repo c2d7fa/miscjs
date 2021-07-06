@@ -83,5 +83,10 @@ export function isValid<P extends Spec>(spec: P, value: unknown): value is Value
     return validLiterals.includes(value);
   }
 
+  if (spec instanceof Array && spec[0] === $_nullable) {
+    if (value === null) return true;
+    return isValid(spec[1], value);
+  }
+
   return false;
 }

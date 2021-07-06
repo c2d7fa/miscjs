@@ -1,6 +1,6 @@
 /// <reference types="@types/jest" />
 
-import {$literal, isValid} from "./spec";
+import {$literal, $nullable, isValid} from "./spec";
 
 describe("basic types", () => {
   test("strings are strings", () => {
@@ -39,5 +39,19 @@ describe("literals", () => {
 
   test("a non-string is never a valid literal, even if it would convert to the string representation", () => {
     expect(isValid($literal(["1"]), 1)).toBeFalsy();
+  });
+});
+
+describe("nullable", () => {
+  test("null is a valid nullable type", () => {
+    expect(isValid($nullable("number"), null)).toBeTruthy();
+  });
+
+  test("a non-null value is invalid when the inner spec doesn't match", () => {
+    expect(isValid($nullable("number"), "this is a string")).toBeFalsy();
+  });
+
+  test("a non-null value is valid when the inner spec matches", () => {
+    expect(isValid($nullable("number"), 0.5)).toBeTruthy();
   });
 });

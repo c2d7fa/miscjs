@@ -55,3 +55,25 @@ describe("nullable", () => {
     expect(isValid($nullable("number"), 0.5)).toBeTruthy();
   });
 });
+
+describe("objects", () => {
+  test("an empty object type matches any object", () => {
+    expect(isValid({}, {a: 0.5})).toBeTruthy();
+  });
+
+  test("no non-objects are valid objects", () => {
+    expect(isValid({}, 0.5)).toBeFalsy();
+  });
+
+  test("null is not a valid object", () => {
+    expect(isValid({}, null)).toBeFalsy();
+  });
+
+  test("if an object is missing keys, it's invalid", () => {
+    expect(isValid({a: "number", b: "string"}, {a: 0.5})).toBeFalsy();
+  });
+
+  test("if a key doesn't match the type, the object is invalid", () => {
+    expect(isValid({a: "number", b: "string"}, {a: 0.5, b: -0.5})).toBeFalsy();
+  });
+});

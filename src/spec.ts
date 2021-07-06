@@ -88,5 +88,16 @@ export function isValid<P extends Spec>(spec: P, value: unknown): value is Value
     return isValid(spec[1], value);
   }
 
+  if (typeof spec === "object") {
+    if (typeof value !== "object") return false;
+    if (value === null) return false;
+    for (const key in spec) {
+      if (!(key in value)) return false;
+      // [TODO] Why don't types check below?
+      if (!isValid(spec[key] as unknown as Spec, (value as any)[key])) return false;
+    }
+    return true;
+  }
+
   return false;
 }

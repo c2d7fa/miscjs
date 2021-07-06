@@ -1,6 +1,6 @@
 /// <reference types="@types/jest" />
 
-import {$literal, $nullable, isValid} from "./spec";
+import {$array, $literal, $nullable, isValid} from "./spec";
 
 describe("basic types", () => {
   test("strings are strings", () => {
@@ -75,5 +75,22 @@ describe("objects", () => {
 
   test("if a key doesn't match the type, the object is invalid", () => {
     expect(isValid({a: "number", b: "string"}, {a: 0.5, b: -0.5})).toBeFalsy();
+  });
+});
+
+describe("arrays", () => {
+  test("an empty array is always a valid array", () => {
+    expect(isValid($array("number"), [])).toBeTruthy();
+  });
+
+  test("a non-array is never a valid array", () => {
+    expect(isValid($array("number"), "[]")).toBeFalsy();
+    expect(isValid($array("number"), null)).toBeFalsy();
+    expect(isValid($array("number"), {})).toBeFalsy();
+    expect(isValid($array("number"), 0.5)).toBeFalsy();
+  });
+
+  test("if any array element doesn't match, the array is invalid", () => {
+    expect(isValid($array("number"), [0, 1, "2", 3])).toBeFalsy();
   });
 });

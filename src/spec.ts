@@ -88,6 +88,14 @@ export function isValid<P extends Spec>(spec: P, value: unknown): value is Value
     return isValid(spec[1], value);
   }
 
+  if (spec instanceof Array && spec[0] === $_array) {
+    if (!(value instanceof Array)) return false;
+    for (const subvalue of value) {
+      if (!isValid(spec, subvalue)) return false;
+    }
+    return true;
+  }
+
   if (typeof spec === "object") {
     if (typeof value !== "object") return false;
     if (value === null) return false;

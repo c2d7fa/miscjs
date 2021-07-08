@@ -20,7 +20,7 @@ describe("getting a value", () => {
   });
 
   test("when the path has an undefined value, it returns undefined", () => {
-    expect(get({a: undefined} as {a: {b: number} | undefined}, "a.b")).toEqual(null);
+    expect(get({a: undefined} as {a: {b: number} | undefined}, "a.b")).toEqual(undefined);
   });
 });
 
@@ -35,5 +35,37 @@ describe("replacing a value", () => {
 
   test("at a deeply nested key replaces the value at that key", () => {
     expect(set({a: {b: {c: 1, d: 2}, e: 3}, f: 4}, "a.b.c", -1)).toEqual({a: {b: {c: -1, d: 2}, e: 3}, f: 4});
+  });
+
+  describe("with array path", () => {
+    test("with path '[]', every item in array is replaced with the same value", () => {
+      expect(set([1, 2, 3, 4], "[]", -1)).toEqual([-1, -1, -1, -1]);
+    });
+
+    test("key path before array replaces each value in the inner array", () => {
+      expect(set({a: {b: [1, 2, 3]}}, "a.b[]", -1)).toEqual({a: {b: [-1, -1, -1]}});
+    });
+
+    test("with path inside array, those subpaths are replaced for each array value", () => {
+      expect(
+        set(
+          {
+            a: [
+              {b: 1, c: 1},
+              {b: 2, c: 2},
+              {b: 3, c: 3},
+            ],
+          },
+          "a[b]",
+          -1,
+        ),
+      ).toEqual({
+        a: [
+          {b: -1, c: 1},
+          {b: -1, c: 2},
+          {b: -1, c: 3},
+        ],
+      });
+    });
   });
 });

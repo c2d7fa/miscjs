@@ -1,15 +1,27 @@
-type AtPath<O, P> = P extends ""
+type GetPath<O, P> = P extends ""
   ? O
   : P extends `${infer Left}.${infer Right}`
-  ? AtPath<AtPath<O, Left>, Right>
+  ?
+      | GetPath<NonNullable<GetPath<O, Left>>, Right>
+      | (null extends GetPath<O, Left> ? null : never)
+      | (undefined extends GetPath<O, Left> ? undefined : never)
   : P extends keyof O
   ? O[P]
   : never;
 
-export function get<O, P extends string>(o: O, path: P): AtPath<O, P> {
+type SetPath<O, P> = P extends ""
+  ? O
+  : P extends `${infer Left}.${infer Right}`
+  ? SetPath<NonNullable<SetPath<O, Left>>, Right>
+  : P extends keyof O
+  ? O[P]
+  : never;
+
+export function get<O, P extends string>(o: O, path: P): GetPath<O, P> {
   let result: any = o;
   for (const segment of path.split(".")) {
     if (segment === "") continue;
+    if (result === null || result === undefined) continue;
     if (!(segment in result)) throw "invalid segment: " + segment;
     result = result[segment];
   }
@@ -17,7 +29,7 @@ export function get<O, P extends string>(o: O, path: P): AtPath<O, P> {
   return result;
 }
 
-export function set<O, P extends string>(o: O, path: P, value: AtPath<O, P>): O {
+export function set<O, P extends string>(o: O, path: P, value: SetPath<O, P>): O {
   const [left, ...rest] = path.split(".");
   const right = rest.join(".");
   if (!left) return value as O;
@@ -26,6 +38,6 @@ export function set<O, P extends string>(o: O, path: P, value: AtPath<O, P>): O 
   return {...o, [left]: set(o[left as keyof O], right, value as any)};
 }
 
-export function update<O, P extends string>(o: O, path: P, f: (x: AtPath<O, P>) => AtPath<O, P>): O {
+export function update<O, P extends string>(o: O, path: P, f: (x: GetPath<O, P>) => SetPath<O, P>): O {
   return set(o, path, f(get(o, path)));
 }

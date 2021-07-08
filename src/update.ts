@@ -16,3 +16,16 @@ export function get<O, P extends string>(o: O, path: P): AtPath<O, P> {
 
   return result;
 }
+
+export function set<O, P extends string>(o: O, path: P, value: AtPath<O, P>): O {
+  const [left, ...rest] = path.split(".");
+  const right = rest.join(".");
+  if (!left) return value as O;
+  if (!(left in o)) throw "invalid path segment: " + left;
+  if (!right) return {...o, [left]: value};
+  return {...o, [left]: set(o[left as keyof O], right, value as any)};
+}
+
+export function update<O, P extends string>(o: O, path: P, f: (x: AtPath<O, P>) => AtPath<O, P>): O {
+  return set(o, path, f(get(o, path)));
+}

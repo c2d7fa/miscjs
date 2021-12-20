@@ -69,3 +69,37 @@ describe("replacing a value", () => {
     });
   });
 });
+
+describe("updating values", () => {
+  describe("with array path", () => {
+    test("with path '[]', every item in array is updated individually", () => {
+      expect(update([1, 2, 3, 4], "[]", (x) => x + 10)).toEqual([11, 12, 13, 14]);
+    });
+
+    test("key path before array updates each value in the inner array", () => {
+      expect(update({a: {b: [1, 2, 3]}}, "a.b[]", (x) => x + 10)).toEqual({a: {b: [11, 12, 13]}});
+    });
+
+    test("with path inside array, those subpaths are updated for each array value", () => {
+      expect(
+        update(
+          {
+            a: [
+              {b: 1, c: 1},
+              {b: 2, c: 2},
+              {b: 3, c: 3},
+            ],
+          },
+          "a[b]",
+          (x) => x + 10,
+        ),
+      ).toEqual({
+        a: [
+          {b: 11, c: 1},
+          {b: 12, c: 2},
+          {b: 13, c: 3},
+        ],
+      });
+    });
+  });
+});

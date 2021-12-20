@@ -34,13 +34,17 @@ export function get<O, P extends string>(o: O, path: P): GetPath<O, P> {
 }
 
 export function set<O, P extends string>(o: O, path: P, value: SetPath<O, P>): O {
-  if (path === "") return value as O;
+  return update(o, path, () => value);
+}
+
+export function update<O, P extends string>(o: O, path: P, f: (x: SetPath<O, P>) => SetPath<O, P>): O {
+  if (path === "") return f(o as any) as any;
 
   const dotMatch = path.match(/([^[.]*)\.(.*)/);
   if (dotMatch) {
     const key = dotMatch[1];
     if (!(key in o)) throw "invalid path segment: " + key;
-    return {...o, [key]: set(o[key as keyof O], dotMatch[2], value as any)};
+    return {...o, [key]: update((o as any)[key as keyof O], dotMatch[2] as any, f)};
   }
 
   const arrayMatch = path.match(/([^[.]*)\[(.*)\]/);
@@ -48,15 +52,11 @@ export function set<O, P extends string>(o: O, path: P, value: SetPath<O, P>): O
     const key = arrayMatch[1];
     if (key !== "") {
       if (!(key in o)) throw "invalid path segment: " + key;
-      return {...o, [key]: (o as any)[key as keyof O].map((x: any) => set(x, arrayMatch[2], value))};
+      return {...o, [key]: (o as any)[key as keyof O].map((x: any) => update(x, arrayMatch[2] as any, f))};
     } else {
-      return (o as any).map((x: any) => set(x, arrayMatch[2], value));
+      return (o as any).map((x: any) => update(x, arrayMatch[2] as any, f));
     }
   }
 
-  return set(o, path + ".", value as any);
-}
-
-export function update<O, P extends string>(o: O, path: P, f: (x: GetPath<O, P>) => SetPath<O, P>): O {
-  return set(o, path, f(get(o, path)));
+  return update(o, (path + ".") as any, f);
 }

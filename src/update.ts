@@ -37,7 +37,9 @@ export function set<O, P extends string>(o: O, path: P, value: SetPath<O, P>): O
   return update(o, path, () => value);
 }
 
-export function update<O, P extends string>(o: O, path: P, f: (x: SetPath<O, P>) => SetPath<O, P>): O {
+export type UpdateFunction<O, P extends string> = (x: SetPath<O, P>) => SetPath<O, P>;
+
+export function update<O, P extends string>(o: O, path: P, f: UpdateFunction<O, P>): O {
   if (path === "") return f(o as any) as any;
 
   const dotMatch = path.match(/([^[.]*)\.(.*)/);
